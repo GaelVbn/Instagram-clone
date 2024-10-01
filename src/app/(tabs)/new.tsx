@@ -1,4 +1,4 @@
 import { Text } from "react-native";
-export default function New() {
-  return <Text>New</Text>;
+export default function CreatePost() {
+  return <Text>Create Post</Text>;
 }
