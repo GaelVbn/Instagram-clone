@@ -7,7 +7,12 @@ export default function FeedScreen() {
     <FlatList
       data={posts}
       renderItem={({ item }) => <PostListItem post={item} />}
-      contentContainerStyle={{ gap: 10 }}
+      contentContainerStyle={{
+        gap: 10,
+        maxWidth: 512,
+        width: "100%",
+        marginHorizontal: "auto",
+      }}
       showsVerticalScrollIndicator={false}
     />
   );
