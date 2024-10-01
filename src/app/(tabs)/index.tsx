@@ -1,5 +1,8 @@
-import { Text } from "react-native";
-
+import { View, Text } from "react-native";
 export default function FeedScreen() {
-  return <Text>Feed</Text>;
+  return (
+    <View>
+      <Text className="text-3xl font-bold">Feed</Text>
+    </View>
+  );
 }
