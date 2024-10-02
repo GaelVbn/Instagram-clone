@@ -1,22 +1,23 @@
 import { View, Text, Image, useWindowDimensions } from "react-native";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
-
 import { AdvancedImage } from "cloudinary-react-native";
-
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
 import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 import { cld } from "@/src/lib/cloudinary";
-import { postcss } from "tailwindcss";
 
 export default function PostListItem({ post }: { post: any }) {
   const { width } = useWindowDimensions();
 
-  const image = cld.image(post.image);
+  // Extraction de l'ID de l'image Cloudinary
+  const imageId = post.image.split("/upload/")[1];
+  const image = cld.image(imageId);
   image.resize(thumbnail().width(width).height(width));
 
-  const avatar = cld.image(post.user.avatar_url);
+  // Extraction de l'ID de l'avatar Cloudinary
+  const avatarId = post.user.avatar_url?.split("/upload/")[1];
+  const avatar = cld.image(avatarId || "default-avatar-id");
   avatar.resize(
     thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
   );
@@ -29,7 +30,9 @@ export default function PostListItem({ post }: { post: any }) {
           cldImg={avatar}
           className="w-12 aspect-square rounded-full"
         />
-        <Text className="font-semibold">{post.user.username}</Text>
+        <Text className="font-semibold">
+          {post.user.username || "Anonymous"}
+        </Text>
       </View>
 
       {/* Image */}
