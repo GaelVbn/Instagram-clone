@@ -6,6 +6,7 @@ import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 import { cld } from "@/src/lib/cloudinary";
+import photoProfileAnonymous from "../../assets/pngegg.png";
 
 export default function PostListItem({ post }: { post: any }) {
   const { width } = useWindowDimensions();
@@ -15,23 +16,37 @@ export default function PostListItem({ post }: { post: any }) {
   const image = cld.image(imageId);
   image.resize(thumbnail().width(width).height(width));
 
-  // Extraction de l'ID de l'avatar Cloudinary
+  // Extraction de l'ID de l'avatar Cloudinary, ou utilisation de l'image locale si indisponible
   const avatarId = post.user.avatar_url?.split("/upload/")[1];
-  const avatar = cld.image(avatarId || "default-avatar-id");
-  avatar.resize(
-    thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
-  );
+  let avatarImage;
+
+  if (avatarId) {
+    const avatar = cld.image(avatarId);
+    avatar.resize(
+      thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
+    );
+    avatarImage = (
+      <AdvancedImage
+        cldImg={avatar}
+        className="w-12 aspect-square rounded-full"
+      />
+    );
+  } else {
+    avatarImage = (
+      <Image
+        source={photoProfileAnonymous}
+        style={{ width: 48, height: 48, borderRadius: 24 }}
+      />
+    );
+  }
 
   return (
     <View className="bg-white">
       {/* Header */}
       <View className="p-3 flex-row items-center gap-2">
-        <AdvancedImage
-          cldImg={avatar}
-          className="w-12 aspect-square rounded-full"
-        />
+        {avatarImage}
         <Text className="font-semibold">
-          {post.user.username || "Anonymous"}
+          {post.user.username || "New user"}
         </Text>
       </View>
 
