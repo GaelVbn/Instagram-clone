@@ -6,7 +6,7 @@ import { byRadius } from "@cloudinary/url-gen/actions/roundCorners";
 import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 import { cld } from "@/src/lib/cloudinary";
-import photoProfileAnonymous from "../../assets/pngegg.png";
+const photoProfileAnonymous = require("@/assets/pngegg.png");
 
 export default function PostListItem({ post }: { post: any }) {
   const { width } = useWindowDimensions();
