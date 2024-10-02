@@ -1,11 +1,11 @@
 import { FlatList } from "react-native";
 import PostListItem from "@/src/components/PostListItem";
-import posts from "@/assets/data/posts.json";
+import post from "@/assets/data/posts.json";
 
 export default function FeedScreen() {
   return (
     <FlatList
-      data={posts}
+      data={post}
       renderItem={({ item }) => <PostListItem post={item} />}
       contentContainerStyle={{
         gap: 10,
