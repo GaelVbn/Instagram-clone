@@ -18,14 +18,14 @@ export default function FeedScreen() {
   const fetchPosts = async () => {
     let { data, error }: any = await supabase
       .from("posts")
-      .select("*, user:profiles(*), my_likes:likes(*)")
+      .select("*, user:profiles(*), my_likes:likes(*), likes(count)")
       // .eq("id", 4)
       .eq("my_likes.user_id", user.id)
       .order("created_at", { ascending: false });
     if (error) {
       Alert.alert("something went wrong");
     }
-    console.log(JSON.stringify(data, null, 2));
+    // console.log(JSON.stringify(data, null, 2));
     setPosts(data);
     setLoading(false);
   };
