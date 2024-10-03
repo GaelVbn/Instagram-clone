@@ -23,20 +23,20 @@ export default function NotificationProvider({ children }: any) {
     registerForPushNotificationsAsync()
       .then((token) => setExpoPushToken(token ?? ""))
       .catch((error: any) => setExpoPushToken(`${error}`));
-    notificationListener.current =
-      Notifications.addNotificationReceivedListener((notification) => {
-        Alert.alert(
-          notification.request.content.title || "Notifications",
-          notification.request.content.subtitle || "Subtitle"
-        );
-      });
+    // notificationListener.current =
+    //   Notifications.addNotificationReceivedListener((notification) => {
+    //     Alert.alert(
+    //       notification.request.content.title || "Notifications",
+    //       notification.request.content.subtitle || "Subtitle"
+    //     );
+    //   });
 
-    return () => {
-      notificationListener.current &&
-        Notifications.removeNotificationSubscription(
-          notificationListener.current
-        );
-    };
+    // return () => {
+    //   notificationListener.current &&
+    //     Notifications.removeNotificationSubscription(
+    //       notificationListener.current
+    //     );
+    // };
   }, []);
 
   useEffect(() => {
