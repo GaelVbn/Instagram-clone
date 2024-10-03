@@ -5,9 +5,13 @@ import Button from "@/src/components/Button";
 import { supabase } from "@/src/lib/supabase";
 import { useAuth } from "@/src/providers/AuthProvider";
 import CustomTextInput from "@/src/components/CustomTextInput";
+import { cld, uploadImage } from "@/src/lib/cloudinary";
+import { thumbnail } from "@cloudinary/url-gen/actions/resize";
+import { AdvancedImage } from "cloudinary-react-native";
 
 export default function ProfileScreen() {
   const [image, setImage] = useState<string | null>(null);
+  const [remoteImage, setRemoteImage] = useState<string | null>(null);
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
 
@@ -30,6 +34,7 @@ export default function ProfileScreen() {
     }
     setUsername(data.username);
     setBio(data.bio);
+    setRemoteImage(data.avatar_url);
   };
 
   const updateProfile = async () => {
@@ -37,9 +42,16 @@ export default function ProfileScreen() {
       return;
     }
 
+    const updatedProfile = { username, bio };
+
+    if (image) {
+      const response = await uploadImage(image);
+      updatedProfile.avatar_url = response.public_id;
+    }
+
     const { data, error } = await supabase
       .from("profiles")
-      .update({ username, bio })
+      .update(updatedProfile)
       .eq("id", user?.id)
       .select();
 
@@ -64,6 +76,12 @@ export default function ProfileScreen() {
     }
   };
 
+  let remoteCldImage;
+  if (remoteImage) {
+    remoteCldImage = cld.image(remoteImage);
+    remoteCldImage.resize(thumbnail().width(300).height(300));
+  }
+
   return (
     <View className="p-3 flex-1">
       {/* AVATAR IMAGE PICKER Profile */}
@@ -73,6 +91,11 @@ export default function ProfileScreen() {
             uri: image,
           }}
           className="w-52 aspect-square mx-auto rounded-full bg-slate-300 "
+        />
+      ) : remoteCldImage ? (
+        <AdvancedImage
+          cldImg={remoteCldImage}
+          className="w-52 aspect-square mx-auto rounded-full bg-slate-300"
         />
       ) : (
         <View className=" aspect-square w-52 mx-auto rounded-full bg-slate-300 " />

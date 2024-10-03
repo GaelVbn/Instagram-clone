@@ -20,31 +20,21 @@ export default function PostListItem({ post }: { post: any }) {
   const avatarId = post.user.avatar_url?.split("/upload/")[1];
   let avatarImage;
 
-  if (avatarId) {
-    const avatar = cld.image(avatarId);
-    avatar.resize(
-      thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
-    );
-    avatarImage = (
-      <AdvancedImage
-        cldImg={avatar}
-        className="w-12 aspect-square rounded-full"
-      />
-    );
-  } else {
-    avatarImage = (
-      <Image
-        source={photoProfileAnonymous}
-        style={{ width: 48, height: 48, borderRadius: 24 }}
-      />
-    );
-  }
+  const avatar = cld.image(
+    post.user.avatar_url || "v1727945531/user/pngegg_vtheui.png"
+  );
+  avatar.resize(
+    thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
+  );
 
   return (
     <View className="bg-white">
       {/* Header */}
       <View className="p-3 flex-row items-center gap-2">
-        {avatarImage}
+        <AdvancedImage
+          cldImg={avatar}
+          className="w-12 aspect-square rounded-full"
+        />
         <Text className="font-semibold">
           {post.user.username || "New user"}
         </Text>
