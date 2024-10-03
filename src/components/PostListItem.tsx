@@ -17,6 +17,7 @@ import PostContent from "./PostContent";
 import { useEffect, useState } from "react";
 import { useAuth } from "../providers/AuthProvider";
 import { supabase } from "../lib/supabase";
+import { sendLikeNotification } from "../utils/notifications";
 const photoProfileAnonymous = require("@/assets/pngegg.png");
 
 export default function PostListItem({ post }: { post: any }) {
@@ -61,6 +62,9 @@ export default function PostListItem({ post }: { post: any }) {
       .from("likes")
       .insert([{ user_id: user?.id, post_id: post.id }])
       .select();
+
+    //sent notification to the user of that post
+    sendLikeNotification(data[0]);
 
     setLikeRecord(data[0]);
   };
