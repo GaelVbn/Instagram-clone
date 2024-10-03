@@ -25,8 +25,11 @@ export default function PostListItem({ post }: { post: any }) {
   const { user } = useAuth();
 
   useEffect(() => {
-    fetchLike();
-  }, []);
+    if (post.my_likes.length > 0) {
+      setIsLiked(true);
+      setLikeRecord(post.my_likes[0]);
+    }
+  }, [post.my_likes]);
 
   useEffect(() => {
     if (isLiked) {
@@ -36,19 +39,19 @@ export default function PostListItem({ post }: { post: any }) {
     }
   }, [isLiked]);
 
-  const fetchLike = async () => {
-    const { data } = await supabase
-      .from("likes")
-      .select("*")
-      .eq("user_id", user?.id)
-      .eq("post_id", post.id)
-      .select();
+  // const fetchLike = async () => {
+  //   const { data } = await supabase
+  //     .from("likes")
+  //     .select("*")
+  //     .eq("user_id", user?.id)
+  //     .eq("post_id", post.id)
+  //     .select();
 
-    if (data && data.length > 0) {
-      setIsLiked(true);
-      setLikeRecord(data[0]);
-    }
-  };
+  //   if (data && data.length > 0) {
+  //     setIsLiked(true);
+  //     setLikeRecord(data[0]);
+  //   }
+  // };
 
   const saveLike = async () => {
     if (likeRecord) {
@@ -109,6 +112,15 @@ export default function PostListItem({ post }: { post: any }) {
         <Ionicons name="chatbubble-outline" size={20} />
         <Feather name="send" size={20} />
         <Feather name="bookmark" size={20} className="ml-auto" />
+      </View>
+      <View className="px-3 gap-2">
+        <Text className="font-semibold">58 likes</Text>
+        <Text>
+          <Text className="font-semibold">
+            {post.user.username || "New user"}{" "}
+          </Text>
+          {post.caption}
+        </Text>
       </View>
     </View>
   );

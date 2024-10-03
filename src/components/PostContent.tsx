@@ -30,7 +30,7 @@ export default function PostContent({ post }) {
         useNativeControls
         resizeMode={ResizeMode.CONTAIN}
         isLooping
-        shouldPlay
+        // shouldPlay
       />
     );
   }
