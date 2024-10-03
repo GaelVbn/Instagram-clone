@@ -42,15 +42,18 @@ export default function PostListItem({ post }: { post: any }) {
       .select("*")
       .eq("user_id", user?.id)
       .eq("post_id", post.id)
-      .single();
+      .select();
 
-    if (data) {
+    if (data && data.length > 0) {
       setIsLiked(true);
-      setLikeRecord(data);
+      setLikeRecord(data[0]);
     }
   };
 
   const saveLike = async () => {
+    if (likeRecord) {
+      return;
+    }
     const { data } = await supabase
       .from("likes")
       .insert([{ user_id: user?.id, post_id: post.id }])
