@@ -1,4 +1,10 @@
-import { View, Text, Image, useWindowDimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  useWindowDimensions,
+  Pressable,
+} from "react-native";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import { AdvancedImage, AdvancedVideo } from "cloudinary-react-native";
 import { thumbnail } from "@cloudinary/url-gen/actions/resize";
@@ -7,33 +13,70 @@ import { focusOn } from "@cloudinary/url-gen/qualifiers/gravity";
 import { FocusOn } from "@cloudinary/url-gen/qualifiers/focusOn";
 import { cld } from "@/src/lib/cloudinary";
 import { Video, ResizeMode } from "expo-av";
+import PostContent from "./PostContent";
+import { useEffect, useState } from "react";
+import { useAuth } from "../providers/AuthProvider";
+import { supabase } from "../lib/supabase";
 const photoProfileAnonymous = require("@/assets/pngegg.png");
 
 export default function PostListItem({ post }: { post: any }) {
-  const { width } = useWindowDimensions();
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+  const [likeRecord, setLikeRecord] = useState<any>(null);
+  const { user } = useAuth();
 
-  {
-    /* Extraction de l'ID de l'image Cloudinary */
-  }
-  const imageId = post.image.split("/upload/")[1];
-  const image = cld.image(imageId);
-  image.resize(thumbnail().width(width).height(width));
+  useEffect(() => {
+    fetchLike();
+  }, []);
 
-  {
-    /* Extraction de l'ID de l'avatar Cloudinary */
-  }
+  useEffect(() => {
+    if (isLiked) {
+      saveLike();
+    } else {
+      deleteLike();
+    }
+  }, [isLiked]);
+
+  const fetchLike = async () => {
+    const { data } = await supabase
+      .from("likes")
+      .select("*")
+      .eq("user_id", user?.id)
+      .eq("post_id", post.id)
+      .single();
+
+    if (data) {
+      setIsLiked(true);
+      setLikeRecord(data);
+    }
+  };
+
+  const saveLike = async () => {
+    const { data } = await supabase
+      .from("likes")
+      .insert([{ user_id: user?.id, post_id: post.id }])
+      .select();
+
+    setLikeRecord(data[0]);
+  };
+
+  const deleteLike = async () => {
+    if (likeRecord) {
+      const { error } = await supabase
+        .from("likes")
+        .delete()
+        .eq("id", likeRecord?.id);
+      if (!error) {
+        setLikeRecord(null);
+      }
+    }
+  };
+
   const avatar = cld.image(
     post.user.avatar_url || "v1727945531/user/pngegg_vtheui.png"
   );
   avatar.resize(
     thumbnail().width(48).height(48).gravity(focusOn(FocusOn.face()))
   );
-
-  {
-    /* Extraction de l'ID de la video Cloudinary */
-  }
-  const videoId = post.image.split("/upload/")[1];
-  const video = cld.video(videoId);
 
   return (
     <View className="bg-white">
@@ -49,29 +92,17 @@ export default function PostListItem({ post }: { post: any }) {
       </View>
 
       {/* Image */}
-      {post.media_type === "image" ? (
-        <AdvancedImage cldImg={image} className="w-full aspect-[4/3]" />
-      ) : (
-        // <AdvancedVideo
-        //   cldVideo={video}
-        //   videoStyle={{ width: "100%", aspectRatio: 4 / 3 }}
-        // />
-        <Video
-          className="w-52 aspect-[3/4] rounded-lg bg-slate-300"
-          style={{ width: "100%", aspectRatio: 16 / 9 }}
-          source={{
-            uri: video.toURL(),
-          }}
-          useNativeControls
-          resizeMode={ResizeMode.CONTAIN}
-          isLooping
-          shouldPlay
-        />
-      )}
+
+      <PostContent post={post} />
 
       {/* Footer */}
       <View className="flex-row gap-3 p-3">
-        <AntDesign name="hearto" size={20} />
+        <AntDesign
+          onPress={() => setIsLiked(!isLiked)}
+          name={isLiked ? "heart" : "hearto"}
+          size={20}
+          color={isLiked ? "crimson" : "black"}
+        />
         <Ionicons name="chatbubble-outline" size={20} />
         <Feather name="send" size={20} />
         <Feather name="bookmark" size={20} className="ml-auto" />
