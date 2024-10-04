@@ -2,7 +2,7 @@
   "expo": {
     "name": "Instagram",
     "slug": "Instagram",
-    "scheme": "Instagram",
+    "scheme": "instagram",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,9 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -42,6 +40,12 @@
         "projectId": "d25031b4-363d-4d45-b621-b41cf013620e"
       }
     },
-    "owner": "gael.vbn"
+    "owner": "gael.vbn",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d25031b4-363d-4d45-b621-b41cf013620e"
+    }
   }
 }
